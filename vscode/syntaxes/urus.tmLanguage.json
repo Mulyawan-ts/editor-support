@@ -1,0 +1,552 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "URUS",
+  "scopeName": "source.urus",
+  "fileTypes": ["urus"],
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#import-statement" },
+    { "include": "#function-declaration" },
+    { "include": "#struct-declaration" },
+    { "include": "#enum-declaration" },
+    { "include": "#match-statement" },
+    { "include": "#for-statement" },
+    { "include": "#let-statement" },
+    { "include": "#fstrings" },
+    { "include": "#strings" },
+    { "include": "#keywords" },
+    { "include": "#result-constructors" },
+    { "include": "#type-annotations" },
+    { "include": "#constants" },
+    { "include": "#builtins" },
+    { "include": "#enum-variant-access" },
+    { "include": "#method-call" },
+    { "include": "#function-call" },
+    { "include": "#numbers" },
+    { "include": "#operators" },
+    { "include": "#punctuation" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.urus",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.urus",
+          "begin": "/\\*",
+          "end": "\\*/",
+          "patterns": [
+            {
+              "name": "comment.block.urus",
+              "begin": "/\\*",
+              "end": "\\*/"
+            }
+          ]
+        }
+      ]
+    },
+
+    "import-statement": {
+      "patterns": [
+        {
+          "match": "\\b(import)\\s+(\"[^\"]*\")",
+          "captures": {
+            "1": { "name": "keyword.control.import.urus" },
+            "2": { "name": "string.quoted.double.import-path.urus" }
+          }
+        }
+      ]
+    },
+
+    "function-declaration": {
+      "patterns": [
+        {
+          "match": "\\b(fn)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+          "captures": {
+            "1": { "name": "keyword.declaration.function.urus" },
+            "2": { "name": "entity.name.function.definition.urus" }
+          }
+        }
+      ]
+    },
+
+    "struct-declaration": {
+      "patterns": [
+        {
+          "match": "\\b(struct)\\s+([A-Z][a-zA-Z0-9_]*)\\b",
+          "captures": {
+            "1": { "name": "keyword.declaration.struct.urus" },
+            "2": { "name": "entity.name.type.struct.urus" }
+          }
+        }
+      ]
+    },
+
+    "enum-declaration": {
+      "patterns": [
+        {
+          "match": "\\b(enum)\\s+([A-Z][a-zA-Z0-9_]*)\\b",
+          "captures": {
+            "1": { "name": "keyword.declaration.enum.urus" },
+            "2": { "name": "entity.name.type.enum.urus" }
+          }
+        }
+      ]
+    },
+
+    "match-statement": {
+      "patterns": [
+        {
+          "match": "\\b(match)\\b",
+          "name": "keyword.control.match.urus"
+        }
+      ]
+    },
+
+    "for-statement": {
+      "patterns": [
+        {
+          "match": "\\b(for)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s+(in)\\b",
+          "captures": {
+            "1": { "name": "keyword.control.for.urus" },
+            "2": { "name": "variable.other.iterator.urus" },
+            "3": { "name": "keyword.control.in.urus" }
+          }
+        }
+      ]
+    },
+
+    "let-statement": {
+      "patterns": [
+        {
+          "match": "\\b(let)\\s+(mut)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(:)",
+          "captures": {
+            "1": { "name": "keyword.declaration.let.urus" },
+            "2": { "name": "storage.modifier.mutable.urus" },
+            "3": { "name": "variable.other.declaration.urus" },
+            "4": { "name": "punctuation.separator.type.urus" }
+          }
+        },
+        {
+          "match": "\\b(let)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\s*(:)",
+          "captures": {
+            "1": { "name": "keyword.declaration.let.urus" },
+            "2": { "name": "variable.other.declaration.urus" },
+            "3": { "name": "punctuation.separator.type.urus" }
+          }
+        },
+        {
+          "match": "\\b(let)\\s+(mut)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+          "captures": {
+            "1": { "name": "keyword.declaration.let.urus" },
+            "2": { "name": "storage.modifier.mutable.urus" },
+            "3": { "name": "variable.other.declaration.urus" }
+          }
+        },
+        {
+          "match": "\\b(let)\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+          "captures": {
+            "1": { "name": "keyword.declaration.let.urus" },
+            "2": { "name": "variable.other.declaration.urus" }
+          }
+        }
+      ]
+    },
+
+    "strings": {
+      "name": "string.quoted.double.urus",
+      "begin": "(?<!f)\"",
+      "end": "\"",
+      "patterns": [
+        { "include": "#string-escape" }
+      ]
+    },
+
+    "string-escape": {
+      "patterns": [
+        {
+          "name": "constant.character.escape.urus",
+          "match": "\\\\[\\\\\"nrt0]"
+        },
+        {
+          "name": "invalid.illegal.unknown-escape.urus",
+          "match": "\\\\."
+        }
+      ]
+    },
+
+    "fstrings": {
+      "name": "string.interpolated.urus",
+      "begin": "f\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "meta.interpolation.urus",
+          "contentName": "meta.embedded.expression.urus",
+          "begin": "\\{",
+          "beginCaptures": {
+            "0": { "name": "punctuation.section.interpolation.begin.urus" }
+          },
+          "end": "\\}",
+          "endCaptures": {
+            "0": { "name": "punctuation.section.interpolation.end.urus" }
+          },
+          "patterns": [
+            { "include": "#fstring-inner-string" },
+            { "include": "#constants" },
+            { "include": "#builtins" },
+            { "include": "#result-constructors" },
+            { "include": "#method-call" },
+            { "include": "#function-call" },
+            { "include": "#numbers" },
+            { "include": "#operators" },
+            { "include": "#keywords" }
+          ]
+        },
+        { "include": "#string-escape" }
+      ]
+    },
+
+    "fstring-inner-string": {
+      "name": "string.quoted.double.inner.urus",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        { "include": "#string-escape" }
+      ]
+    },
+
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.flow.urus",
+          "match": "\\b(if|else|while|return|break|continue)\\b"
+        },
+        {
+          "name": "keyword.control.match.urus",
+          "match": "\\b(match)\\b"
+        },
+        {
+          "name": "keyword.declaration.urus",
+          "match": "\\b(fn|let|struct|enum|import)\\b"
+        },
+        {
+          "name": "storage.modifier.mutable.urus",
+          "match": "\\b(mut)\\b"
+        }
+      ]
+    },
+
+    "result-constructors": {
+      "patterns": [
+        {
+          "match": "\\b(Ok|Err)\\s*\\(",
+          "captures": {
+            "1": { "name": "support.type.result-constructor.urus" }
+          }
+        },
+        {
+          "name": "support.type.result-constructor.urus",
+          "match": "\\b(Ok|Err)\\b"
+        }
+      ]
+    },
+
+    "type-annotations": {
+      "patterns": [
+        {
+          "comment": "Result<T, E> generic type",
+          "match": "\\b(Result)\\s*(<)([^>]*)(>)",
+          "captures": {
+            "1": { "name": "support.type.result.urus" },
+            "2": { "name": "punctuation.definition.generic.begin.urus" },
+            "3": {
+              "patterns": [
+                {
+                  "name": "storage.type.primitive.urus",
+                  "match": "\\b(int|float|bool|str|void)\\b"
+                },
+                {
+                  "name": "entity.name.type.urus",
+                  "match": "\\b([A-Z][a-zA-Z0-9_]*)\\b"
+                },
+                {
+                  "name": "punctuation.separator.comma.urus",
+                  "match": ","
+                }
+              ]
+            },
+            "4": { "name": "punctuation.definition.generic.end.urus" }
+          }
+        },
+        {
+          "comment": "Array type [T]",
+          "match": "(\\[)\\s*(int|float|bool|str)\\s*(\\])",
+          "captures": {
+            "1": { "name": "punctuation.definition.array-type.begin.urus" },
+            "2": { "name": "storage.type.primitive.urus" },
+            "3": { "name": "punctuation.definition.array-type.end.urus" }
+          }
+        },
+        {
+          "comment": "Array type with named type [StructName]",
+          "match": "(\\[)\\s*([A-Z][a-zA-Z0-9_]*)\\s*(\\])",
+          "captures": {
+            "1": { "name": "punctuation.definition.array-type.begin.urus" },
+            "2": { "name": "entity.name.type.urus" },
+            "3": { "name": "punctuation.definition.array-type.end.urus" }
+          }
+        },
+        {
+          "comment": "Primitive types after colon (type annotation)",
+          "match": "(?<=:)\\s*(int|float|bool|str|void)\\b",
+          "captures": {
+            "1": { "name": "storage.type.primitive.urus" }
+          }
+        },
+        {
+          "comment": "Named types after colon (struct/enum)",
+          "match": "(?<=:)\\s*([A-Z][a-zA-Z0-9_]*)\\b",
+          "captures": {
+            "1": { "name": "entity.name.type.urus" }
+          }
+        },
+        {
+          "comment": "Return type after closing paren",
+          "match": "(?<=\\))\\s*(:)\\s*(int|float|bool|str|void)\\b",
+          "captures": {
+            "1": { "name": "punctuation.separator.return-type.urus" },
+            "2": { "name": "storage.type.primitive.urus" }
+          }
+        },
+        {
+          "comment": "Return type named after closing paren",
+          "match": "(?<=\\))\\s*(:)\\s*([A-Z][a-zA-Z0-9_]*)\\b",
+          "captures": {
+            "1": { "name": "punctuation.separator.return-type.urus" },
+            "2": { "name": "entity.name.type.urus" }
+          }
+        },
+        {
+          "comment": "Result type standalone",
+          "name": "support.type.result.urus",
+          "match": "\\bResult\\b"
+        },
+        {
+          "comment": "Primitive types standalone",
+          "name": "storage.type.primitive.urus",
+          "match": "\\b(int|float|bool|str|void)\\b"
+        }
+      ]
+    },
+
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.urus",
+          "match": "\\b(true|false)\\b"
+        }
+      ]
+    },
+
+    "builtins": {
+      "patterns": [
+        {
+          "comment": "I/O built-in functions",
+          "match": "\\b(print|input|read_file|write_file|append_file)(?=\\s*\\()",
+          "name": "support.function.io.urus"
+        },
+        {
+          "comment": "Array built-in functions",
+          "match": "\\b(len|push|pop)(?=\\s*\\()",
+          "name": "support.function.array.urus"
+        },
+        {
+          "comment": "String built-in functions",
+          "match": "\\b(str_len|str_upper|str_lower|str_trim|str_contains|str_find|str_slice|str_replace|str_starts_with|str_ends_with|str_split|char_at)(?=\\s*\\()",
+          "name": "support.function.string.urus"
+        },
+        {
+          "comment": "Type conversion functions",
+          "match": "\\b(to_str|to_int|to_float)(?=\\s*\\()",
+          "name": "support.function.conversion.urus"
+        },
+        {
+          "comment": "Math built-in functions",
+          "match": "\\b(abs|fabs|sqrt|pow|min|max|fmin|fmax)(?=\\s*\\()",
+          "name": "support.function.math.urus"
+        },
+        {
+          "comment": "Result built-in functions",
+          "match": "\\b(is_ok|is_err|unwrap|unwrap_err)(?=\\s*\\()",
+          "name": "support.function.result.urus"
+        },
+        {
+          "comment": "Utility built-in functions",
+          "match": "\\b(exit|assert)(?=\\s*\\()",
+          "name": "support.function.utility.urus"
+        }
+      ]
+    },
+
+    "enum-variant-access": {
+      "patterns": [
+        {
+          "comment": "Enum variant with data: EnumName.Variant(",
+          "match": "\\b([A-Z][a-zA-Z0-9_]*)\\.([A-Z][a-zA-Z0-9_]*)\\s*(?=\\()",
+          "captures": {
+            "1": { "name": "entity.name.type.enum.urus" },
+            "2": { "name": "variable.other.enummember.urus" }
+          }
+        },
+        {
+          "comment": "Enum variant unit: EnumName.Variant",
+          "match": "\\b([A-Z][a-zA-Z0-9_]*)\\.([A-Z][a-zA-Z0-9_]*)\\b",
+          "captures": {
+            "1": { "name": "entity.name.type.enum.urus" },
+            "2": { "name": "variable.other.enummember.urus" }
+          }
+        }
+      ]
+    },
+
+    "method-call": {
+      "patterns": [
+        {
+          "comment": "Method-style call: obj.method()",
+          "match": "(?<=[a-zA-Z0-9_\\]\\)])\\.([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()",
+          "captures": {
+            "1": { "name": "entity.name.function.method.urus" }
+          }
+        },
+        {
+          "comment": "Field access: obj.field",
+          "match": "(?<=[a-zA-Z0-9_\\]\\)])\\.([a-zA-Z_][a-zA-Z0-9_]*)\\b(?!\\s*\\()",
+          "captures": {
+            "1": { "name": "variable.other.property.urus" }
+          }
+        }
+      ]
+    },
+
+    "function-call": {
+      "patterns": [
+        {
+          "comment": "Regular function call",
+          "match": "\\b([a-z_][a-zA-Z0-9_]*)\\s*(?=\\()",
+          "captures": {
+            "1": { "name": "entity.name.function.call.urus" }
+          }
+        },
+        {
+          "comment": "Struct constructor call (PascalCase followed by {)",
+          "match": "\\b([A-Z][a-zA-Z0-9_]*)\\s*(?=\\{)",
+          "captures": {
+            "1": { "name": "entity.name.type.struct.urus" }
+          }
+        }
+      ]
+    },
+
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.float.urus",
+          "match": "\\b[0-9]+\\.[0-9]+\\b"
+        },
+        {
+          "name": "constant.numeric.integer.urus",
+          "match": "\\b[0-9]+\\b"
+        }
+      ]
+    },
+
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.arrow.match.urus",
+          "match": "=>"
+        },
+        {
+          "name": "keyword.operator.range.inclusive.urus",
+          "match": "\\.\\.="
+        },
+        {
+          "name": "keyword.operator.range.exclusive.urus",
+          "match": "\\.\\."
+        },
+        {
+          "name": "keyword.operator.comparison.urus",
+          "match": "(==|!=|<=|>=|<|>)"
+        },
+        {
+          "name": "keyword.operator.logical.urus",
+          "match": "(&&|\\|\\||!(?!=))"
+        },
+        {
+          "name": "keyword.operator.assignment.compound.urus",
+          "match": "(\\+=|-=|\\*=|/=)"
+        },
+        {
+          "name": "keyword.operator.assignment.urus",
+          "match": "=(?!=|>)"
+        },
+        {
+          "name": "keyword.operator.arithmetic.urus",
+          "match": "(\\+|-|\\*|/|%)"
+        },
+        {
+          "name": "keyword.operator.pipe.urus",
+          "match": "\\|(?!\\|)"
+        }
+      ]
+    },
+
+    "punctuation": {
+      "patterns": [
+        {
+          "name": "punctuation.separator.semicolon.urus",
+          "match": ";"
+        },
+        {
+          "name": "punctuation.separator.comma.urus",
+          "match": ","
+        },
+        {
+          "name": "punctuation.separator.colon.urus",
+          "match": ":"
+        },
+        {
+          "name": "punctuation.section.braces.begin.urus",
+          "match": "\\{"
+        },
+        {
+          "name": "punctuation.section.braces.end.urus",
+          "match": "\\}"
+        },
+        {
+          "name": "punctuation.section.parens.begin.urus",
+          "match": "\\("
+        },
+        {
+          "name": "punctuation.section.parens.end.urus",
+          "match": "\\)"
+        },
+        {
+          "name": "punctuation.section.brackets.begin.urus",
+          "match": "\\["
+        },
+        {
+          "name": "punctuation.section.brackets.end.urus",
+          "match": "\\]"
+        },
+        {
+          "name": "punctuation.accessor.dot.urus",
+          "match": "\\."
+        }
+      ]
+    }
+  }
+}

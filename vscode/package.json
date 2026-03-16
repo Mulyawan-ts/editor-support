@@ -1,0 +1,203 @@
+{
+  "name": "urus-language",
+  "displayName": "URUS - Syntax Highlighting & Snippets",
+  "description": "Full language support for URUS — syntax highlighting, IntelliSense, diagnostics, build commands, snippets, and more.",
+  "version": "0.3.0",
+  "publisher": "UrusFoundation",
+  "author": {
+    "name": "Urus Foundation",
+    "url": "https://github.com/Urus-Foundation"
+  },
+  "license": "Apache-2.0",
+  "icon": "icon.png",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onLanguage:urus"
+  ],
+  "categories": [
+    "Programming Languages",
+    "Snippets",
+    "Linters",
+    "Themes"
+  ],
+  "keywords": [
+    "urus",
+    "programming language",
+    "syntax highlighting",
+    "compiled language",
+    "transpiler",
+    "c-backend"
+  ],
+  "homepage": "https://github.com/Urus-Foundation/Urus",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Urus-Foundation/Urus"
+  },
+  "bugs": {
+    "url": "https://github.com/Urus-Foundation/Urus/issues"
+  },
+  "galleryBanner": {
+    "color": "#1a1a2e",
+    "theme": "dark"
+  },
+  "scripts": {
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "lint": "tsc --noEmit",
+    "package": "vsce package",
+    "prepackage": "node esbuild.js --production"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.75.0",
+    "@types/node": "^18.0.0",
+    "typescript": "^5.3.0",
+    "esbuild": "^0.19.0",
+    "@vscode/vsce": "^2.22.0"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "urus",
+        "aliases": ["URUS", "urus"],
+        "extensions": [".urus"],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icon.png",
+          "dark": "./icon.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "urus",
+        "scopeName": "source.urus",
+        "path": "./syntaxes/urus.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "urus",
+        "path": "./snippets/urus.code-snippets"
+      }
+    ],
+    "themes": [
+      {
+        "label": "URUS Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/urus-dark-theme.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "urus.build",
+        "title": "URUS: Build Current File",
+        "icon": "$(tools)"
+      },
+      {
+        "command": "urus.run",
+        "title": "URUS: Build and Run",
+        "icon": "$(play)"
+      },
+      {
+        "command": "urus.emitC",
+        "title": "URUS: Show Generated C Code",
+        "icon": "$(file-code)"
+      },
+      {
+        "command": "urus.showTokens",
+        "title": "URUS: Show Lexer Tokens",
+        "icon": "$(list-flat)"
+      },
+      {
+        "command": "urus.showAST",
+        "title": "URUS: Show AST",
+        "icon": "$(list-tree)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "urus.build",
+        "key": "ctrl+shift+b",
+        "when": "editorLangId == urus"
+      },
+      {
+        "command": "urus.run",
+        "key": "ctrl+f5",
+        "when": "editorLangId == urus"
+      }
+    ],
+    "configuration": {
+      "title": "URUS",
+      "properties": {
+        "urus.compilerPath": {
+          "type": "string",
+          "default": "urusc",
+          "description": "Path to the URUS compiler (urusc). If not absolute, searched in PATH."
+        },
+        "urus.buildArgs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Extra arguments passed to the URUS compiler."
+        },
+        "urus.diagnostics.enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable real-time diagnostics (error squiggles) on file save."
+        },
+        "urus.diagnostics.onSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Run diagnostics automatically when a .urus file is saved."
+        }
+      }
+    },
+    "taskDefinitions": [
+      {
+        "type": "urusc",
+        "required": ["task"],
+        "properties": {
+          "task": {
+            "type": "string",
+            "enum": ["build", "run", "emit-c", "tokens", "ast"],
+            "description": "The urusc task to run."
+          },
+          "file": {
+            "type": "string",
+            "description": "The .urus file to compile."
+          }
+        }
+      }
+    ],
+    "problemMatchers": [
+      {
+        "name": "urusc",
+        "owner": "urus",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^(.+?):(\\d+):\\s*(?:Error|Warning):\\s*(.+)$",
+          "file": 1,
+          "line": 2,
+          "message": 3
+        }
+      }
+    ],
+    "semanticTokenTypes": [
+      {
+        "id": "urusBuiltin",
+        "description": "URUS built-in function",
+        "superType": "function"
+      }
+    ],
+    "semanticTokenScopes": [
+      {
+        "scopes": {
+          "urusBuiltin": ["support.function.builtin.urus"]
+        }
+      }
+    ]
+  }
+}
